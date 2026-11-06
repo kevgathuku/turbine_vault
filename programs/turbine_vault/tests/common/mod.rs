@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use {
     anchor_lang::{
         prelude::Pubkey,
@@ -54,6 +56,20 @@ pub fn initialize_tx(user: &Pubkey, vault: &Pubkey, vault_state: &Pubkey) -> Ins
         turbine_vault::id(),
         &turbine_vault::instruction::Initialize {}.data(),
         turbine_vault::accounts::Initialize {
+            user: *user,
+            vault: *vault,
+            vault_state: *vault_state,
+            system_program: system_program::ID,
+        }
+        .to_account_metas(None),
+    )
+}
+
+pub fn deposit_tx(user: &Pubkey, vault: &Pubkey, vault_state: &Pubkey, amount: u64) -> Instruction {
+    Instruction::new_with_bytes(
+        turbine_vault::id(),
+        &turbine_vault::instruction::Deposit { amount }.data(),
+        turbine_vault::accounts::Deposit {
             user: *user,
             vault: *vault,
             vault_state: *vault_state,
