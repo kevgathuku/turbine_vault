@@ -38,12 +38,11 @@ jobs:
       - name: Check formatting
         run: cargo fmt --all -- --check
 
-      - name: Clippy
-        run: cargo clippy --workspace --all-targets -- -D warnings
-
-      # Must run before the tests: they load target/deploy/*.so via include_bytes!.
       - name: Build program
         run: anchor build
+
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
 
       - name: Test
         run: cargo test --workspace
