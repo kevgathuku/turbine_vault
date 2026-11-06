@@ -29,7 +29,11 @@ jobs:
           echo "$HOME/.local/share/solana/install/active_release/bin" >> "$GITHUB_PATH"
 
       - name: Install Anchor CLI
-        run: cargo install --locked anchor-cli --version "$ANCHOR_VERSION"
+        # Second toolchain: anchor-cli 1.2.x needs solana-sbpf@0.23.0, which
+        # won't compile on the pinned 1.91.0, so only this step uses stable.
+        run: |
+          rustup toolchain install stable --profile minimal
+          cargo +stable install --locked anchor-cli --version "$ANCHOR_VERSION"
 
       - name: Check formatting
         run: cargo fmt --all -- --check
