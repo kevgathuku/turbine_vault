@@ -6,8 +6,7 @@ use {
 mod common;
 use common::*;
 
-const BASE_UNITS_PER_TOKEN: u64 = 1_000_000;
-const DEPOSIT_AMOUNT: u64 = 500 * BASE_UNITS_PER_TOKEN;
+const DEPOSIT_AMOUNT: u64 = 500 * LAMPORTS_PER_SOL;
 
 #[test]
 fn test_deposit() {
@@ -22,11 +21,11 @@ fn test_deposit() {
 
     let rent_exempt = svm.minimum_balance_for_rent_exemption(0);
 
-    let initialize_tx = initialize_tx(&user.pubkey(), &vault, &vault_state);
-    let deposit_tx = deposit_tx(&user.pubkey(), &vault, &vault_state, DEPOSIT_AMOUNT);
+    let initialize_txn = initialize_tx(&user.pubkey(), &vault, &vault_state);
+    let deposit_txn = deposit_tx(&user.pubkey(), &vault, &vault_state, DEPOSIT_AMOUNT);
 
-    send(&mut svm, &[&user], initialize_tx).expect("initialize should succeed");
-    send(&mut svm, &[&user], deposit_tx).expect("deposit should succeed");
+    send(&mut svm, &[&user], initialize_txn).expect("initialize should succeed");
+    send(&mut svm, &[&user], deposit_txn).expect("deposit should succeed");
 
     assert_eq!(
         svm.get_balance(&vault).unwrap(),

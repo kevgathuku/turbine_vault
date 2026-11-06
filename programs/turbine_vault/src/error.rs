@@ -6,4 +6,6 @@ pub enum ErrorCode {
     InvalidAmount,
     #[msg("Insufficient funds for deposit")]
     InsufficientFunds,
+    #[msg("Insufficient funds for withdrawal")]
+    InsufficientVaultFunds,
 }

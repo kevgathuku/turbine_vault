@@ -11,8 +11,12 @@ use {
     solana_message::{Message, VersionedMessage},
     solana_signer::Signer,
     solana_transaction::versioned::VersionedTransaction,
+    turbine_vault::accounts,
     turbine_vault::constants::{VAULT_SEED, VAULT_STATE_SEED},
+    turbine_vault::instruction,
 };
+
+pub const LAMPORTS_PER_SOL: u64 = 1_000_000;
 
 pub struct SetupFixture {
     pub svm: LiteSVM,
@@ -54,8 +58,8 @@ pub fn setup() -> SetupFixture {
 pub fn initialize_tx(user: &Pubkey, vault: &Pubkey, vault_state: &Pubkey) -> Instruction {
     Instruction::new_with_bytes(
         turbine_vault::id(),
-        &turbine_vault::instruction::Initialize {}.data(),
-        turbine_vault::accounts::Initialize {
+        &instruction::Initialize {}.data(),
+        accounts::Initialize {
             user: *user,
             vault: *vault,
             vault_state: *vault_state,
@@ -68,8 +72,27 @@ pub fn initialize_tx(user: &Pubkey, vault: &Pubkey, vault_state: &Pubkey) -> Ins
 pub fn deposit_tx(user: &Pubkey, vault: &Pubkey, vault_state: &Pubkey, amount: u64) -> Instruction {
     Instruction::new_with_bytes(
         turbine_vault::id(),
-        &turbine_vault::instruction::Deposit { amount }.data(),
-        turbine_vault::accounts::Deposit {
+        &instruction::Deposit { amount }.data(),
+        accounts::Deposit {
+            user: *user,
+            vault: *vault,
+            vault_state: *vault_state,
+            system_program: system_program::ID,
+        }
+        .to_account_metas(None),
+    )
+}
+
+pub fn withdraw_tx(
+    user: &Pubkey,
+    vault: &Pubkey,
+    vault_state: &Pubkey,
+    amount: u64,
+) -> Instruction {
+    Instruction::new_with_bytes(
+        turbine_vault::id(),
+        &instruction::Withdraw { amount }.data(),
+        accounts::Withdraw {
             user: *user,
             vault: *vault,
             vault_state: *vault_state,
