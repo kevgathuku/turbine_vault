@@ -1,5 +1,5 @@
 use crate::{
-    constants::{VAULT_STATE_SEED, VAULT_SEED},
+    constants::{VAULT_SEED, VAULT_STATE_SEED},
     state::VaultState,
 };
 use anchor_lang::{

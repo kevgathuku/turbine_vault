@@ -31,7 +31,10 @@ pub struct Withdraw<'info> {
 impl<'info> Withdraw<'info> {
     pub fn handle_withdraw(&mut self, amount: u64) -> Result<()> {
         require!(amount > 0, ErrorCode::InvalidAmount);
-        require!(self.vault.lamports() >= amount, ErrorCode::InsufficientVaultFunds);
+        require!(
+            self.vault.lamports() >= amount,
+            ErrorCode::InsufficientVaultFunds
+        );
 
         let cpi_program = self.system_program.key();
 
