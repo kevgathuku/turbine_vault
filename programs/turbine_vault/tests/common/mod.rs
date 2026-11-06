@@ -102,6 +102,20 @@ pub fn withdraw_tx(
     )
 }
 
+pub fn close_tx(user: &Pubkey, vault: &Pubkey, vault_state: &Pubkey) -> Instruction {
+    Instruction::new_with_bytes(
+        turbine_vault::id(),
+        &instruction::Close {}.data(),
+        accounts::Close {
+            user: *user,
+            vault: *vault,
+            vault_state: *vault_state,
+            system_program: system_program::ID,
+        }
+        .to_account_metas(None),
+    )
+}
+
 pub fn send(
     svm: &mut LiteSVM,
     signers: &[&Keypair],
