@@ -9,7 +9,7 @@ use {
     solana_message::{Message, VersionedMessage},
     solana_signer::Signer,
     solana_transaction::versioned::VersionedTransaction,
-    turbine_vault::constants::{STATE, VAULT_SEED},
+    turbine_vault::constants::{VAULT_STATE_SEED, VAULT_SEED},
     turbine_vault::VaultState,
 };
 
@@ -29,7 +29,7 @@ fn setup() -> SetupFixture {
     let (vault, vault_bump) =
         Pubkey::find_program_address(&[VAULT_SEED, user.pubkey().as_ref()], &program_id);
     let (vault_state, state_bump) =
-        Pubkey::find_program_address(&[STATE, user.pubkey().as_ref()], &program_id);
+        Pubkey::find_program_address(&[VAULT_STATE_SEED, user.pubkey().as_ref()], &program_id);
 
     let mut svm = LiteSVM::new();
     let program_bytes = include_bytes!(concat!(
