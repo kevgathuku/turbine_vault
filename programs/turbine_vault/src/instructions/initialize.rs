@@ -1,4 +1,7 @@
-use anchor_lang::prelude::*;
+use anchor_lang::{
+    prelude::*,
+    system_program::{transfer, Transfer},
+};
 
 use crate::{constants::*, state::Counter};
 
@@ -21,12 +24,15 @@ pub fn handle_initialize(ctx: Context<Initialize>) -> Result<()> {
     ctx.accounts.counter.count = 0;
     ctx.accounts.counter.authority = ctx.accounts.payer.key();
 
-    let cpi_accounts = anchor_lang::system_program::Transfer {
+    let cpi_accounts = Transfer {
         from: ctx.accounts.payer.to_account_info(),
         to: ctx.accounts.counter.to_account_info(),
     };
-    let cpi_ctx = CpiContext::new(anchor_lang::system_program::ID, cpi_accounts);
-    anchor_lang::system_program::transfer(cpi_ctx, HELLO_WORLD_LAMPORTS)?;
+    // read the system program from context
+    let cpi_program = ctx.accounts.system_program.key();
+
+    let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
+    transfer(cpi_ctx, HELLO_WORLD_LAMPORTS)?;
 
     msg!("Hello, world! Counter initialized");
     Ok(())
