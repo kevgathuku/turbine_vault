@@ -19,4 +19,8 @@ pub mod turbine_vault {
     pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
         ctx.accounts.handle_initialize(&ctx.bumps)
     }
+
+    pub fn deposit(ctx: Context<Deposit>, amount: u64) -> Result<()> {
+        ctx.accounts.handle_deposit(amount)
+    }
 }
