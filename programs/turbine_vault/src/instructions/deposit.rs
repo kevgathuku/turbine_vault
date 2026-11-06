@@ -31,6 +31,7 @@ pub struct Deposit<'info> {
 impl<'info> Deposit<'info> {
     pub fn handle_deposit(&mut self, amount: u64) -> Result<()> {
         require!(amount > 0, ErrorCode::InvalidAmount);
+        require!(self.user.lamports() >= amount, ErrorCode::InsufficientFunds);
 
         let cpi_program = self.system_program.key();
 

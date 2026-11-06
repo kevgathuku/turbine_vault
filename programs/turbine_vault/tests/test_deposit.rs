@@ -133,9 +133,10 @@ fn test_deposit_rejects_amount_exceeding_user_balance() {
     let deposit_txn = deposit_tx(&user.pubkey(), &vault, &vault_state, balance + 1);
 
     let err = send(&mut svm, &[&user], deposit_txn).unwrap_err();
+    let expected_msg = ErrorCode::InsufficientFunds.to_string();
     let err_str = format!("{err:?}");
     assert!(
-        err_str.contains("insufficient lamports"),
+        err_str.contains(&expected_msg),
         "expected insufficient funds error, got: {err_str}"
     );
 }
