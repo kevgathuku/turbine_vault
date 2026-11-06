@@ -184,3 +184,28 @@ fn test_deposit_wrong_vault_state_fails() {
         "expected seeds error, got: {err_str}"
     );
 }
+
+#[test]
+fn test_deposit_wrong_owner_vault_state_fails() {
+    let SetupFixture {
+        mut svm,
+        user,
+        vault,
+        vault_state,
+        ..
+    } = setup();
+
+    let init_txn = initialize_tx(&user.pubkey(), &vault, &vault_state);
+
+    send(&mut svm, &[&user], init_txn).expect("initialize should succeed");
+
+    // Pass vault PDA instead of vault_state
+    let bad_ix = deposit_tx(&user.pubkey(), &vault, &vault, DEPOSIT_AMOUNT);
+    let err = send(&mut svm, &[&user], bad_ix).unwrap_err();
+
+    let err_str = format!("{err:?}");
+    assert!(
+        err_str.contains("AccountOwnedByWrongProgram"),
+        "expected account validation error, got: {err_str}"
+    );
+}
