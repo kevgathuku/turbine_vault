@@ -9,6 +9,7 @@ pub use constants::*;
 pub use instructions::*;
 pub use state::*;
 
+// Program's on-chain address
 declare_id!("DphE5pQY59DmKLcJtbRihLhudA3A9Kiy8aGUfdnKoP6X");
 
 #[program]
@@ -16,10 +17,6 @@ pub mod turbine_vault {
     use super::*;
 
     pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        crate::instructions::initialize::handle_initialize(ctx)
-    }
-
-    pub fn increment(ctx: Context<Increment>) -> Result<()> {
-        crate::instructions::increment::handle_increment(ctx)
+        ctx.accounts.handle_initialize(&ctx.bumps)
     }
 }
