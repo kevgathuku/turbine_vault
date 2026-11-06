@@ -29,7 +29,7 @@ jobs:
           echo "$HOME/.local/share/solana/install/active_release/bin" >> "$GITHUB_PATH"
 
       - name: Install Anchor CLI
-        run: cargo install anchor-cli --version "$ANCHOR_VERSION"
+        run: cargo install --locked anchor-cli --version "$ANCHOR_VERSION"
 
       - name: Check formatting
         run: cargo fmt --all -- --check
