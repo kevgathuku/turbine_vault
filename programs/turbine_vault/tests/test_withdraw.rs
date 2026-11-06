@@ -111,7 +111,7 @@ fn test_withdraw_rejects_non_signer_user() {
     withdraw_txn.accounts[0].is_signer = false;
 
     // stranger pays + signs
-    let err = send(&mut svm, &[&stranger], withdraw_txn);
+    let err = send(&mut svm, &[&stranger], withdraw_txn).unwrap_err();
 
     let err_str = format!("{err:?}");
     assert!(

@@ -1,6 +1,11 @@
 use {
-    anchor_lang::error::ErrorCode::AccountNotInitialized, solana_keypair::Keypair,
-    solana_signer::Signer, turbine_vault::error::ErrorCode,
+    anchor_lang::{
+        error::ErrorCode::AccountNotInitialized, error::ErrorCode::ConstraintSeeds, prelude::Pubkey,
+    },
+    solana_keypair::Keypair,
+    solana_signer::Signer,
+    turbine_vault::constants::{VAULT_SEED, VAULT_STATE_SEED},
+    turbine_vault::error::ErrorCode,
 };
 
 mod common;
@@ -96,7 +101,7 @@ fn test_deposit_rejects_non_signer_user() {
     } = setup();
 
     let stranger = Keypair::new();
-    svm.airdrop(&stranger.pubkey(), 1_000_000_000).unwrap();
+    svm.airdrop(&stranger.pubkey(), DEPOSIT_AMOUNT).unwrap();
 
     let init_txn = initialize_tx(&user.pubkey(), &vault, &vault_state);
     send(&mut svm, &[&user], init_txn).expect("initialize should succeed");
@@ -105,7 +110,7 @@ fn test_deposit_rejects_non_signer_user() {
     deposit_txn.accounts[0].is_signer = false;
 
     // stranger pays + signs
-    let err = send(&mut svm, &[&stranger], deposit_txn);
+    let err = send(&mut svm, &[&stranger], deposit_txn).unwrap_err();
 
     let err_str = format!("{err:?}");
     assert!(
@@ -137,5 +142,45 @@ fn test_deposit_rejects_amount_exceeding_user_balance() {
     assert!(
         err_str.contains(&expected_msg),
         "expected insufficient funds error, got: {err_str}"
+    );
+}
+
+#[test]
+fn test_deposit_wrong_vault_state_fails() {
+    let SetupFixture {
+        mut svm,
+        user,
+        vault,
+        vault_state,
+        ..
+    } = setup();
+
+    // Initialize a different user so its vault_state exists
+    let stranger = Keypair::new();
+    svm.airdrop(&stranger.pubkey(), DEPOSIT_AMOUNT).unwrap();
+    let (stranger_vault, _) = Pubkey::find_program_address(
+        &[VAULT_SEED, stranger.pubkey().as_ref()],
+        &turbine_vault::id(),
+    );
+    let (stranger_state, _) = Pubkey::find_program_address(
+        &[VAULT_STATE_SEED, stranger.pubkey().as_ref()],
+        &turbine_vault::id(),
+    );
+
+    let stranger_init_txn = initialize_tx(&stranger.pubkey(), &stranger_vault, &stranger_state);
+    send(&mut svm, &[&stranger], stranger_init_txn).expect("stranger initialize should succeed");
+
+    let init_txn = initialize_tx(&user.pubkey(), &vault, &vault_state);
+    send(&mut svm, &[&user], init_txn).expect("initialize should succeed");
+
+    // Pass vault state derived with different user's key
+    let bad_ix = deposit_tx(&user.pubkey(), &vault, &stranger_state, DEPOSIT_AMOUNT);
+    let err = send(&mut svm, &[&user], bad_ix).unwrap_err();
+
+    let expected_msg = ConstraintSeeds.to_string();
+    let err_str = format!("{err:?}");
+    assert!(
+        err_str.contains(&expected_msg),
+        "expected seeds error, got: {err_str}"
     );
 }
