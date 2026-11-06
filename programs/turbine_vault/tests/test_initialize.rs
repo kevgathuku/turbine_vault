@@ -1,5 +1,6 @@
 use {
     anchor_lang::{solana_program::system_program, AccountDeserialize},
+    solana_keypair::Keypair,
     solana_signer::Signer,
     turbine_vault::VaultState,
 };
@@ -78,5 +79,32 @@ fn test_double_initialize_fails() {
     assert!(
         err_str.to_lowercase().contains("already in use"),
         "expected already-in-use error, got: {err_str}"
+    );
+}
+
+#[test]
+fn test_initialize_rejects_non_signer_user() {
+    let SetupFixture {
+        mut svm,
+        user,
+        vault_state,
+        vault,
+        state_bump: _,
+        vault_bump: _,
+    } = setup();
+
+    let stranger = Keypair::new();
+    svm.airdrop(&stranger.pubkey(), 1_000_000_000).unwrap();
+
+    let mut init_txn = initialize_tx(&user.pubkey(), &vault, &vault_state);
+    init_txn.accounts[0].is_signer = false;
+
+    // stranger pays + signs
+    let err = send(&mut svm, &[&stranger], init_txn);
+
+    let err_str = format!("{err:?}");
+    assert!(
+        err_str.contains("AccountNotSigner"),
+        "expected account not signer error, got: {err_str}"
     );
 }
