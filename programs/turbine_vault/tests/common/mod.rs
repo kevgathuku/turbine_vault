@@ -116,6 +116,7 @@ pub fn close_tx(user: &Pubkey, vault: &Pubkey, vault_state: &Pubkey) -> Instruct
     )
 }
 
+#[allow(clippy::result_large_err)]
 pub fn send(
     svm: &mut LiteSVM,
     signers: &[&Keypair],
