@@ -1,5 +1,7 @@
 # turbine_vault
 
+[![CI](https://github.com/kevgathuku/turbine_vault/actions/workflows/ci.yml/badge.svg)](https://github.com/kevgathuku/turbine_vault/actions/workflows/ci.yml)
+
 1. Creates a per-user SOL vault (`initialize`)
 2. Accepts deposits into the vault (`deposit`)
 3. Pays out withdrawals signed by the vault PDA (`withdraw`)
@@ -9,30 +11,26 @@ Each user gets two PDAs: `vault_state` (stores PDA bumps) and `vault` (holds raw
 
 ## Setup
 
-Requirements: Rust 1.89+, Solana CLI, Anchor CLI, a funded localnet wallet.
+Requirements: Rust 1.91, Solana CLI, Anchor CLI, a funded localnet wallet.
 
-1. Wallet for the provider (see `Anchor.toml`):
+Wallet for the provider (see `Anchor.toml`):
 
-```
+```txt
 ~/.config/solana/id.json
-```
-
-1. Build the program (also refreshes `target/deploy/turbine_vault.so` used by the tests):
-
-```bash
-anchor build
 ```
 
 ## Commands
 
 ```bash
-anchor build                          # build the program
-cargo test -p turbine_vault           # run all LiteSVM tests
+# build the program
+anchor build          
+# run all LiteSVM tests      
+cargo test -p turbine_vault           
 ```
 
 ## Run
 
-Tests run against LiteSVM with the freshly built `.so` — rebuild after any `src/` change or the tests exercise stale code.
+Tests run against the freshly built `.so` — rebuild after any `src/` change
 
 1. Initialize a vault for your wallet:
 
@@ -60,7 +58,7 @@ Fails on invalid amounts:
 withdraw_tx(&user.pubkey(), &vault, &vault_state, amount)
 ```
 
-Moves `amount` in lamports from vault to user, signed by the vault PDA (`seeds + vault_bump` via `new_with_signer`).
+Moves `amount` in lamports from vault to user, signed by the vault PDA (`seeds + vault_bump`).
 Fails on invalid amounts:
 
 - `amount == 0` => `InvalidAmount`
