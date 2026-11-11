@@ -20,8 +20,7 @@ fn test_deposit() {
         user,
         vault_state,
         vault,
-        state_bump: _,
-        vault_bump: _,
+        ..
     } = setup();
 
     let rent_exempt = svm.minimum_balance_for_rent_exemption(0);
@@ -46,8 +45,7 @@ fn test_deposit_before_initialize_fails() {
         user,
         vault_state,
         vault,
-        state_bump: _,
-        vault_bump: _,
+        ..
     } = setup();
 
     let deposit_tx = deposit_tx(&user.pubkey(), &vault, &vault_state, DEPOSIT_AMOUNT);
@@ -69,8 +67,7 @@ fn test_deposit_zero_amount_fails() {
         user,
         vault_state,
         vault,
-        state_bump: _,
-        vault_bump: _,
+        ..
     } = setup();
 
     let init_txn = initialize_tx(&user.pubkey(), &vault, &vault_state);
@@ -96,8 +93,7 @@ fn test_deposit_rejects_non_signer_user() {
         user,
         vault_state,
         vault,
-        state_bump: _,
-        vault_bump: _,
+        ..
     } = setup();
 
     let stranger = Keypair::new();
@@ -126,8 +122,7 @@ fn test_deposit_rejects_amount_exceeding_user_balance() {
         user,
         vault_state,
         vault,
-        state_bump: _,
-        vault_bump: _,
+        ..
     } = setup();
 
     let init_txn = initialize_tx(&user.pubkey(), &vault, &vault_state);

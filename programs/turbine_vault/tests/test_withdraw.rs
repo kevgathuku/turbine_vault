@@ -16,8 +16,7 @@ fn test_withdraw() {
         user,
         vault_state,
         vault,
-        state_bump: _,
-        vault_bump: _,
+        ..
     } = setup();
 
     let rent_exempt = svm.minimum_balance_for_rent_exemption(0);
@@ -44,8 +43,7 @@ fn test_withdraw_before_initialize_fails() {
         user,
         vault_state,
         vault,
-        state_bump: _,
-        vault_bump: _,
+        ..
     } = setup();
 
     let withdraw_txn = withdraw_tx(&user.pubkey(), &vault, &vault_state, WITHDRAW_AMOUNT);
@@ -67,8 +65,7 @@ fn test_withdraw_zero_amount_fails() {
         user,
         vault_state,
         vault,
-        state_bump: _,
-        vault_bump: _,
+        ..
     } = setup();
 
     let initialize_txn = initialize_tx(&user.pubkey(), &vault, &vault_state);
@@ -94,8 +91,7 @@ fn test_withdraw_rejects_non_signer_user() {
         user,
         vault_state,
         vault,
-        state_bump: _,
-        vault_bump: _,
+        ..
     } = setup();
 
     let stranger = Keypair::new();
@@ -127,8 +123,7 @@ fn test_withdraw_rejects_amount_exceeding_vault_balance() {
         user,
         vault_state,
         vault,
-        state_bump: _,
-        vault_bump: _,
+        ..
     } = setup();
 
     let init_txn = initialize_tx(&user.pubkey(), &vault, &vault_state);

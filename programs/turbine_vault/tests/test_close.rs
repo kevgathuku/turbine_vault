@@ -12,8 +12,7 @@ fn test_close() {
         user,
         vault_state,
         vault,
-        state_bump: _,
-        vault_bump: _,
+        ..
     } = setup();
 
     let initialize_txn = initialize_tx(&user.pubkey(), &vault, &vault_state);
@@ -52,8 +51,7 @@ fn test_close_before_initialize_fails() {
         user,
         vault_state,
         vault,
-        state_bump: _,
-        vault_bump: _,
+        ..
     } = setup();
 
     let close_txn = close_tx(&user.pubkey(), &vault, &vault_state);
