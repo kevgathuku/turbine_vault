@@ -60,7 +60,7 @@ fn test_double_initialize_fails() {
         user,
         vault_state,
         vault,
-       ..
+        ..
     } = setup();
 
     let instruction = initialize_tx(&user.pubkey(), &vault, &vault_state);
@@ -88,7 +88,7 @@ fn test_initialize_rejects_non_signer_user() {
         user,
         vault_state,
         vault,
-       ..
+        ..
     } = setup();
 
     let stranger = Keypair::new();
